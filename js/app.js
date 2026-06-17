@@ -365,4 +365,11 @@ class InnerSpaceApp {
 // Instantiate on load
 window.addEventListener('DOMContentLoaded', () => {
     window.app = new InnerSpaceApp();
+    
+    // Register PWA Service Worker
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('Service Worker registered successfully!', reg))
+            .catch(err => console.error('Service Worker registration failed:', err));
+    }
 });

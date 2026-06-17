@@ -1,0 +1,25 @@
+{
+  "name": "InnerSpace — Self-Discovery Journey",
+  "short_name": "InnerSpace",
+  "description": "A quiet place to explore your personality, rate life balance, sort core values, and journal reflections.",
+  "start_url": "./index.html",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#0b0a15",
+  "theme_color": "#121124",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ]
+}
