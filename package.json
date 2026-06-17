@@ -1,0 +1,19 @@
+{
+  "name": "inner-space",
+  "version": "1.0.0",
+  "description": "InnerSpace - Interactive Self-Discovery Dashboard",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000"
+  },
+  "keywords": [
+    "self-discovery",
+    "reflection",
+    "dashboard",
+    "radar-chart",
+    "journal"
+  ],
+  "author": "Antigravity",
+  "license": "MIT"
+}

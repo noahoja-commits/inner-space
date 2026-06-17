@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InnerSpace — Interactive Self-Discovery Journey</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background Canvas for Aura Animation -->
+    <canvas id="aura-canvas"></canvas>
+    <div class="ambient-glow"></div>
+
+    <!-- Main App Container -->
+    <div id="app-container">
+        
+        <!-- ==================== ONBOARDING / WELCOME SCREEN ==================== -->
+        <section id="welcome-screen" class="screen active">
+            <div class="welcome-card glass-card">
+                <div class="welcome-header">
+                    <div class="logo-mark">
+                        <i data-lucide="compass" class="glow-icon"></i>
+                    </div>
+                    <h1>InnerSpace</h1>
+                    <p class="subtitle">A space for reflection, alignment, and self-discovery.</p>
+                </div>
+                <div class="welcome-body">
+                    <p>Embark on a guided journey to map your core values, visualize your life balance, explore your behavioral patterns, and capture your reflections.</p>
+                    <div class="input-group">
+                        <label for="username-input">How should we address you?</label>
+                        <input type="text" id="username-input" placeholder="Enter your name..." autocomplete="off">
+                    </div>
+                    <button id="start-journey-btn" class="btn btn-primary btn-lg">
+                        <span>Begin Journey</span>
+                        <i data-lucide="arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== MAIN DASHBOARD SCREEN ==================== -->
+        <section id="dashboard-screen" class="screen">
+            <header class="app-header">
+                <div class="logo-area">
+                    <i data-lucide="compass" class="logo-icon"></i>
+                    <span class="logo-text">InnerSpace</span>
+                </div>
+                <div class="user-greeting">
+                    <span>Welcome back, <strong id="greeting-name">Explorer</strong></span>
+                    <button id="reset-data-btn" class="btn btn-icon-text btn-outline btn-sm" title="Reset all data">
+                        <i data-lucide="rotate-ccw"></i>
+                        <span>Reset Journey</span>
+                    </button>
+                </div>
+            </header>
+
+            <main class="dashboard-content">
+                <section class="dashboard-hero">
+                    <div class="hero-text">
+                        <h1>Your Self-Discovery Dashboard</h1>
+                        <p>Complete the four reflective pathways to unlock your <strong>Personal Blueprint</strong>.</p>
+                    </div>
+                    <div class="blueprint-unlock-widget glass-card">
+                        <div class="progress-circle-container">
+                            <svg class="progress-ring" width="120" height="120">
+                                <circle class="progress-ring__background" stroke="rgba(255,255,255,0.06)" stroke-width="8" fill="transparent" r="50" cx="60" cy="60"/>
+                                <circle class="progress-ring__circle" stroke="url(#progress-gradient)" stroke-width="8" fill="transparent" r="50" cx="60" cy="60"/>
+                                <defs>
+                                    <linearGradient id="progress-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="var(--accent-teal)" />
+                                        <stop offset="50%" stop-color="var(--accent-violet)" />
+                                        <stop offset="100%" stop-color="var(--accent-rose)" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                            <div class="progress-text">
+                                <span id="progress-percentage">0%</span>
+                                <span class="progress-label">Complete</span>
+                            </div>
+                        </div>
+                        <div class="blueprint-action">
+                            <h3>Personal Blueprint</h3>
+                            <p id="blueprint-status-text">Unlock your comprehensive personality and values profile.</p>
+                            <button id="view-blueprint-btn" class="btn btn-primary" disabled>
+                                <i data-lucide="sparkles"></i>
+                                <span>Reveal Blueprint</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Pathways Grid -->
+                <section class="pathways-grid">
+                    <!-- Module 1: Core Values -->
+                    <div class="pathway-card glass-card" data-module="values">
+                        <div class="card-status-badge">
+                            <span class="status-dot"></span>
+                            <span class="status-label">Incomplete</span>
+                        </div>
+                        <div class="card-icon-wrapper val-color">
+                            <i data-lucide="gem"></i>
+                        </div>
+                        <h2>Core Values Sorter</h2>
+                        <p>Clarify what drives your choices. Narrow down a list of 24 core human values to discover your top 5 guiding principles.</p>
+                        <button class="btn btn-secondary start-module-btn" data-target="values">
+                            <span>Start Pathway</span>
+                            <i data-lucide="arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Module 2: Life Wheel -->
+                    <div class="pathway-card glass-card" data-module="wheel">
+                        <div class="card-status-badge">
+                            <span class="status-dot"></span>
+                            <span class="status-label">Incomplete</span>
+                        </div>
+                        <div class="card-icon-wrapper wheel-color">
+                            <i data-lucide="pie-chart"></i>
+                        </div>
+                        <h2>Life Balance Wheel</h2>
+                        <p>Assess your level of satisfaction and alignment across 8 foundational areas of life, identifying where adjustment is needed.</p>
+                        <button class="btn btn-secondary start-module-btn" data-target="wheel">
+                            <span>Start Pathway</span>
+                            <i data-lucide="arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Module 3: Personality Prism -->
+                    <div class="pathway-card glass-card" data-module="personality">
+                        <div class="card-status-badge">
+                            <span class="status-dot"></span>
+                            <span class="status-label">Incomplete</span>
+                        </div>
+                        <div class="card-icon-wrapper prism-color">
+                            <i data-lucide="prism"></i>
+                        </div>
+                        <h2>Personality Prism</h2>
+                        <p>Map your behavior across 4 crucial axes: Curiosity, Resilience, Empathy, and Focus. Uncover your cognitive archetype.</p>
+                        <button class="btn btn-secondary start-module-btn" data-target="personality">
+                            <span>Start Pathway</span>
+                            <i data-lucide="arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Module 4: Reflective Journal -->
+                    <div class="pathway-card glass-card" data-module="journal">
+                        <div class="card-status-badge">
+                            <span class="status-dot"></span>
+                            <span class="status-label">Incomplete</span>
+                        </div>
+                        <div class="card-icon-wrapper journal-color">
+                            <i data-lucide="book-open"></i>
+                        </div>
+                        <h2>Prompt Journal</h2>
+                        <p>Express yourself freely through structured reflective prompts. Receive client-side keyword and emotional tone themes.</p>
+                        <button class="btn btn-secondary start-module-btn" data-target="journal">
+                            <span>Start Pathway</span>
+                            <i data-lucide="arrow-right"></i>
+                        </button>
+                    </div>
+                </section>
+            </main>
+        </section>
+
+        <!-- ==================== MODULE 1: CORE VALUES SCREEN ==================== -->
+        <section id="values-screen" class="screen">
+            <header class="module-header">
+                <button class="btn btn-icon back-to-dashboard-btn" title="Back to Dashboard">
+                    <i data-lucide="chevron-left"></i>
+                </button>
+                <div class="header-title-wrapper">
+                    <span class="module-category">Pathway 01</span>
+                    <h1>Core Values Sorter</h1>
+                </div>
+                <div class="step-indicator">
+                    <span class="step active" id="val-step-1">1. Group Values</span>
+                    <i data-lucide="chevron-right" class="step-sep"></i>
+                    <span class="step" id="val-step-2">2. Rank Top 5</span>
+                </div>
+            </header>
+
+            <div class="module-content">
+                <!-- Phase 1: Card Sorting -->
+                <div id="values-phase-1" class="phase-container active">
+                    <div class="instruction-banner">
+                        <p>Below is a curated list of values. Sort each card into one of three buckets based on how important it is to you in this season of your life.</p>
+                    </div>
+
+                    <div class="sorting-board">
+                        <div class="card-pile-container">
+                            <div class="card-pile" id="values-pile">
+                                <!-- Cards will be generated dynamically -->
+                                <div class="values-completion-placeholder">
+                                    <i data-lucide="check-circle" class="checkmark"></i>
+                                    <h3>All values sorted!</h3>
+                                    <p>Proceed to rank your absolute top 5 values.</p>
+                                    <button id="values-proceed-to-phase2" class="btn btn-primary">
+                                        <span>Proceed to Rank Top 5</span>
+                                        <i data-lucide="arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="cards-remaining-counter">
+                                <span id="unsorted-count">24</span> values remaining
+                            </div>
+                        </div>
+
+                        <div class="drop-zones">
+                            <div class="drop-zone high-priority" id="zone-high">
+                                <h3>High Priority</h3>
+                                <div class="zone-list-preview" id="preview-high">0 items</div>
+                                <button class="btn btn-sm btn-outline quick-sort-btn" data-priority="high">
+                                    <i data-lucide="arrow-up-right"></i> Put here
+                                </button>
+                            </div>
+                            <div class="drop-zone medium-priority" id="zone-medium">
+                                <h3>Medium Priority</h3>
+                                <div class="zone-list-preview" id="preview-medium">0 items</div>
+                                <button class="btn btn-sm btn-outline quick-sort-btn" data-priority="medium">
+                                    <i data-lucide="arrow-right"></i> Put here
+                                </button>
+                            </div>
+                            <div class="drop-zone low-priority" id="zone-low">
+                                <h3>Low Priority</h3>
+                                <div class="zone-list-preview" id="preview-low">0 items</div>
+                                <button class="btn btn-sm btn-outline quick-sort-btn" data-priority="low">
+                                    <i data-lucide="arrow-down-right"></i> Put here
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 2: Narrow down & rank top 5 -->
+                <div id="values-phase-2" class="phase-container">
+                    <div class="instruction-banner">
+                        <p>Drag or click cards from your <strong>High Priority</strong> list on the left and place them in order (1 to 5) in your core stack on the right.</p>
+                    </div>
+
+                    <div class="ranking-board">
+                        <div class="candidate-values-wrapper">
+                            <h3>Your High Priority Values</h3>
+                            <div class="candidate-list" id="high-priority-candidates">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <div class="ranking-slots-wrapper">
+                            <h3>Your Top 5 Core Values</h3>
+                            <div class="ranking-slots" id="ranked-slots">
+                                <div class="rank-slot" data-rank="1">
+                                    <div class="rank-num">1</div>
+                                    <div class="slot-content" id="slot-1">Drag Value Here</div>
+                                </div>
+                                <div class="rank-slot" data-rank="2">
+                                    <div class="rank-num">2</div>
+                                    <div class="slot-content" id="slot-2">Drag Value Here</div>
+                                </div>
+                                <div class="rank-slot" data-rank="3">
+                                    <div class="rank-num">3</div>
+                                    <div class="slot-content" id="slot-3">Drag Value Here</div>
+                                </div>
+                                <div class="rank-slot" data-rank="4">
+                                    <div class="rank-num">4</div>
+                                    <div class="slot-content" id="slot-4">Drag Value Here</div>
+                                </div>
+                                <div class="rank-slot" data-rank="5">
+                                    <div class="rank-num">5</div>
+                                    <div class="slot-content" id="slot-5">Drag Value Here</div>
+                                </div>
+                            </div>
+
+                            <button id="save-values-btn" class="btn btn-primary btn-lg" disabled>
+                                <i data-lucide="check"></i>
+                                <span>Save Core Values</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== MODULE 2: LIFE BALANCE WHEEL SCREEN ==================== -->
+        <section id="wheel-screen" class="screen">
+            <header class="module-header">
+                <button class="btn btn-icon back-to-dashboard-btn" title="Back to Dashboard">
+                    <i data-lucide="chevron-left"></i>
+                </button>
+                <div class="header-title-wrapper">
+                    <span class="module-category">Pathway 02</span>
+                    <h1>Life Balance Wheel</h1>
+                </div>
+            </header>
+
+            <div class="module-content layout-two-col">
+                <div class="left-panel col-visual">
+                    <div class="canvas-wrapper wheel-interactive-container">
+                        <!-- Dual Radar Chart Rendering SVG -->
+                        <svg id="interactive-wheel-svg" viewBox="0 0 400 400" width="100%" height="100%">
+                            <!-- Grid circles, axes and labels will be dynamically injected by wheel.js -->
+                        </svg>
+                        <div class="radar-legend">
+                            <span class="legend-item"><span class="legend-dot satisfaction"></span> Satisfaction</span>
+                            <span class="legend-item"><span class="legend-dot growth"></span> Desired Growth</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-panel col-controls glass-card">
+                    <div class="panel-header">
+                        <h2>Rate Your Life Alignment</h2>
+                        <p>Adjust the sliders below to rate your current level of satisfaction and your desired level of growth in each dimension. The chart updates in real-time.</p>
+                    </div>
+
+                    <div class="category-selectors-wrapper" id="wheel-sliders-container">
+                        <!-- Sliders dynamically generated by wheel.js -->
+                    </div>
+
+                    <div class="panel-actions">
+                        <button id="save-wheel-btn" class="btn btn-primary btn-lg w-full">
+                            <i data-lucide="check"></i>
+                            <span>Save Life Balance Profile</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== MODULE 3: PERSONALITY PRISM SCREEN ==================== -->
+        <section id="personality-screen" class="screen">
+            <header class="module-header">
+                <button class="btn btn-icon back-to-dashboard-btn" title="Back to Dashboard">
+                    <i data-lucide="chevron-left"></i>
+                </button>
+                <div class="header-title-wrapper">
+                    <span class="module-category">Pathway 03</span>
+                    <h1>Personality Prism</h1>
+                </div>
+            </header>
+
+            <div class="module-content">
+                <div class="questionnaire-card glass-card" id="quiz-card">
+                    <!-- Progress Bar -->
+                    <div class="quiz-progress-bar-wrapper">
+                        <div class="quiz-progress-line" id="quiz-progress-line" style="width: 0%;"></div>
+                        <span class="quiz-progress-fraction" id="quiz-progress-fraction">Question 1 of 20</span>
+                    </div>
+
+                    <div class="question-container" id="question-container">
+                        <!-- Questions will be injected dynamically -->
+                        <h2 id="question-text">Loading question...</h2>
+                    </div>
+
+                    <div class="likert-scale-answers">
+                        <button class="btn likert-btn strong-agree" data-score="5">
+                            <span class="btn-label">Strongly Agree</span>
+                        </button>
+                        <button class="btn likert-btn agree" data-score="4">
+                            <span class="btn-label">Agree</span>
+                        </button>
+                        <button class="btn likert-btn neutral" data-score="3">
+                            <span class="btn-label">Neutral</span>
+                        </button>
+                        <button class="btn likert-btn disagree" data-score="2">
+                            <span class="btn-label">Disagree</span>
+                        </button>
+                        <button class="btn likert-btn strong-disagree" data-score="1">
+                            <span class="btn-label">Strongly Disagree</span>
+                        </button>
+                    </div>
+
+                    <div class="quiz-navigation-footer">
+                        <button id="quiz-prev-btn" class="btn btn-outline btn-sm" disabled>
+                            <i data-lucide="chevron-left"></i>
+                            <span>Previous Question</span>
+                        </button>
+                        <span class="quiz-dimension-label" id="quiz-dimension-label">Dimension: Focus</span>
+                    </div>
+                </div>
+
+                <!-- Quiz Results Overlay (Hidden initially, shown after final question) -->
+                <div class="results-container glass-card" id="quiz-results-container" style="display: none;">
+                    <h2>Your Cognitive Prism Analyzed</h2>
+                    <div class="results-layout">
+                        <div class="results-chart-area">
+                            <svg id="prism-results-svg" viewBox="0 0 300 300" width="100%" height="300px">
+                                <!-- Dynamic polar chart visualization -->
+                            </svg>
+                        </div>
+                        <div class="results-text-area">
+                            <div class="archetype-badge">Archetype: <span id="archetype-name">The Catalyst</span></div>
+                            <p class="archetype-desc" id="archetype-description">Loading descriptions...</p>
+                            
+                            <div class="traits-breakdown">
+                                <div class="trait-progress">
+                                    <label>Curiosity (Exploration)</label>
+                                    <div class="trait-bar-bg"><div class="trait-bar" id="bar-curiosity" style="width: 70%;"></div></div>
+                                </div>
+                                <div class="trait-progress">
+                                    <label>Resilience (Fortitude)</label>
+                                    <div class="trait-bar-bg"><div class="trait-bar" id="bar-resilience" style="width: 70%;"></div></div>
+                                </div>
+                                <div class="trait-progress">
+                                    <label>Empathy (Connection)</label>
+                                    <div class="trait-bar-bg"><div class="trait-bar" id="bar-empathy" style="width: 70%;"></div></div>
+                                </div>
+                                <div class="trait-progress">
+                                    <label>Focus (Drive)</label>
+                                    <div class="trait-bar-bg"><div class="trait-bar" id="bar-focus" style="width: 70%;"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="results-footer">
+                        <button id="restart-quiz-btn" class="btn btn-outline">
+                            <i data-lucide="rotate-ccw"></i>
+                            <span>Retake Assessment</span>
+                        </button>
+                        <button id="save-quiz-btn" class="btn btn-primary btn-lg">
+                            <i data-lucide="check"></i>
+                            <span>Lock in Profile</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== MODULE 4: REFLECTIVE JOURNAL SCREEN ==================== -->
+        <section id="journal-screen" class="screen">
+            <header class="module-header">
+                <button class="btn btn-icon back-to-dashboard-btn" title="Back to Dashboard">
+                    <i data-lucide="chevron-left"></i>
+                </button>
+                <div class="header-title-wrapper">
+                    <span class="module-category">Pathway 04</span>
+                    <h1>Reflective Prompt Journal</h1>
+                </div>
+            </header>
+
+            <div class="module-content layout-two-col">
+                <div class="left-panel col-controls glass-card">
+                    <div class="journal-prompt-carousel">
+                        <div class="carousel-control-header">
+                            <span>Choose a Reflection Prompt</span>
+                            <div class="carousel-nav">
+                                <button id="prompt-prev-btn" class="btn btn-icon btn-sm"><i data-lucide="chevron-left"></i></button>
+                                <button id="prompt-next-btn" class="btn btn-icon btn-sm"><i data-lucide="chevron-right"></i></button>
+                            </div>
+                        </div>
+                        <div class="prompt-text-display">
+                            <h3 id="current-prompt">"What is a personal boundary that you've set recently, and how did it affect your relationship with yourself and others?"</h3>
+                        </div>
+                        <button id="shuffle-prompt-btn" class="btn btn-outline btn-xs">
+                            <i data-lucide="shuffle"></i>
+                            <span>Surprise me</span>
+                        </button>
+                    </div>
+
+                    <div class="journal-input-area">
+                        <textarea id="journal-textarea" placeholder="Start typing your reflections here... (minimum 50 characters for real-time analysis)"></textarea>
+                        <div class="char-counter"><span id="journal-char-count">0</span> characters</div>
+                    </div>
+
+                    <div class="panel-actions">
+                        <button id="save-journal-btn" class="btn btn-primary btn-lg w-full" disabled>
+                            <i data-lucide="save"></i>
+                            <span>Save & Analyze Entry</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="right-panel col-visual glass-card" id="journal-analysis-panel">
+                    <div class="panel-header">
+                        <h2>Mind Mapping & Sentiment</h2>
+                        <p>As you write, our client-side text processor extracts the emotional tone and prominent semantic themes from your entry.</p>
+                    </div>
+
+                    <div class="analysis-visualizers">
+                        <!-- Sentiment Meter -->
+                        <div class="analysis-widget sentiment-widget">
+                            <h3>Emotional Frequency</h3>
+                            <div class="sentiment-indicator-wrapper">
+                                <div class="sentiment-scale">
+                                    <div class="sentiment-marker" id="sentiment-marker-pos" style="left: 50%;"></div>
+                                </div>
+                                <div class="sentiment-labels">
+                                    <span>Introspective/Low Energy</span>
+                                    <span id="sentiment-percentage">Neutral</span>
+                                    <span>Energized/Positive</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Semantic Themes -->
+                        <div class="analysis-widget themes-widget">
+                            <h3>Extracted Themes</h3>
+                            <div class="theme-tags-cloud" id="theme-tags-cloud">
+                                <span class="theme-tag-placeholder">Write at least 50 characters to map your themes...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== SYNTHESIS: PERSONAL BLUEPRINT SCREEN ==================== -->
+        <section id="blueprint-screen" class="screen">
+            <header class="blueprint-header">
+                <button class="btn btn-icon back-to-dashboard-btn" title="Back to Dashboard">
+                    <i data-lucide="chevron-left"></i>
+                </button>
+                <div class="header-title-wrapper">
+                    <span class="module-category">Synthesis</span>
+                    <h1>Your Personal Blueprint</h1>
+                </div>
+                <div class="header-actions">
+                    <button id="print-blueprint-btn" class="btn btn-primary">
+                        <i data-lucide="printer"></i>
+                        <span>Export / Print PDF</span>
+                    </button>
+                </div>
+            </header>
+
+            <main class="blueprint-grid-wrapper" id="blueprint-print-area">
+                <div class="blueprint-intro-banner glass-card">
+                    <div class="banner-overlay-design"></div>
+                    <div class="banner-content">
+                        <h2>InnerSpace Profile: <span id="bp-user-name">Explorer</span></h2>
+                        <p class="blueprint-meta">Generated on <span id="bp-date">June 17, 2026</span></p>
+                        <blockquote class="blueprint-quote">"He who knows others is wise. He who knows himself is enlightened." — Lao Tzu</blockquote>
+                    </div>
+                </div>
+
+                <div class="blueprint-content-grid">
+                    <!-- Column 1: Personality Prism & Values -->
+                    <div class="bp-col flex-col">
+                        <!-- Personality Card -->
+                        <div class="blueprint-section glass-card" id="bp-personality-section">
+                            <div class="section-title">
+                                <i data-lucide="prism"></i>
+                                <h2>Personality Archetype</h2>
+                            </div>
+                            <div class="bp-archetype-hero">
+                                <h3 id="bp-archetype-name">The Catalyst</h3>
+                                <p id="bp-archetype-desc">You approach life with an open mind and a strong willingness to explore. You bounce back from setbacks quickly and form strong connections with others.</p>
+                            </div>
+                            <div class="bp-trait-grid">
+                                <div class="bp-trait-metric">
+                                    <span class="bp-trait-lbl">Curiosity</span>
+                                    <div class="bp-trait-val"><span id="bp-val-curiosity">70%</span></div>
+                                </div>
+                                <div class="bp-trait-metric">
+                                    <span class="bp-trait-lbl">Resilience</span>
+                                    <div class="bp-trait-val"><span id="bp-val-resilience">70%</span></div>
+                                </div>
+                                <div class="bp-trait-metric">
+                                    <span class="bp-trait-lbl">Empathy</span>
+                                    <div class="bp-trait-val"><span id="bp-val-empathy">70%</span></div>
+                                </div>
+                                <div class="bp-trait-metric">
+                                    <span class="bp-trait-lbl">Focus</span>
+                                    <div class="bp-trait-val"><span id="bp-val-focus">70%</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Core Values Card -->
+                        <div class="blueprint-section glass-card" id="bp-values-section">
+                            <div class="section-title">
+                                <i data-lucide="gem"></i>
+                                <h2>Guiding Core Values</h2>
+                            </div>
+                            <div class="bp-values-list" id="bp-values-list">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Life Wheel & Journal Analysis -->
+                    <div class="bp-col flex-col">
+                        <!-- Life Balance Chart Section -->
+                        <div class="blueprint-section glass-card" id="bp-wheel-section">
+                            <div class="section-title">
+                                <i data-lucide="pie-chart"></i>
+                                <h2>Life Balance Audit</h2>
+                            </div>
+                            <div class="bp-wheel-layout">
+                                <div class="bp-radar-wrapper">
+                                    <svg id="bp-wheel-static-svg" viewBox="0 0 300 300" width="100%" height="220px">
+                                        <!-- Copy of life wheel radar -->
+                                    </svg>
+                                </div>
+                                <div class="bp-alignment-gaps-list" id="bp-gaps-list">
+                                    <!-- Dynamic list of areas of alignment gaps and advice -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Journal Themes Section -->
+                        <div class="blueprint-section glass-card" id="bp-journal-section">
+                            <div class="section-title">
+                                <i data-lucide="book-open"></i>
+                                <h2>Mental Space & Sentiment</h2>
+                            </div>
+                            <div class="bp-journal-analysis">
+                                <div class="sentiment-summary-box">
+                                    <span class="bp-lbl">Dominant Tone</span>
+                                    <h3 id="bp-sentiment-text">Neutral / Reflective</h3>
+                                </div>
+                                <div class="themes-summary-box">
+                                    <span class="bp-lbl">Core Reflection Themes</span>
+                                    <div class="theme-tags-cloud" id="bp-theme-cloud">
+                                        <!-- Themes tags list -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </section>
+
+    </div>
+
+    <!-- Notification System -->
+    <div id="toast" class="toast-notification">
+        <i data-lucide="info" id="toast-icon"></i>
+        <span id="toast-message">Notification message</span>
+    </div>
+
+    <!-- Dynamic Main Application Scripts -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
