@@ -1992,3 +1992,125 @@ p {
         color: black !important;
     }
 }
+
+/* ==========================================================================
+   Aura Theme Customizations
+   ========================================================================== */
+
+.user-greeting {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.aura-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: hsla(0, 0%, 100%, 0.04);
+    border: 1px solid var(--border-glass);
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+}
+
+.aura-lbl {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-right: 0.2rem;
+}
+
+.aura-dot-btn {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    padding: 0;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+}
+
+.aura-dot-btn:hover {
+    transform: scale(1.25);
+}
+
+.aura-dot-btn.active {
+    border-color: white;
+    transform: scale(1.15);
+    box-shadow: 0 0 8px white;
+}
+
+/* Aura Repainting Variable Rules */
+body.aura-teal {
+    --accent-violet: hsl(174, 75%, 45%);
+    --accent-rose: hsl(140, 75%, 45%);
+    --gradient-btn: linear-gradient(135deg, hsl(174, 75%, 45%) 0%, hsl(140, 75%, 45%) 100%);
+    --shadow-glow: 0 0 20px hsla(174, 75%, 45%, 0.4);
+}
+
+body.aura-rose {
+    --accent-violet: hsl(340, 75%, 62%);
+    --accent-rose: hsl(290, 75%, 62%);
+    --gradient-btn: linear-gradient(135deg, hsl(340, 75%, 62%) 0%, hsl(290, 75%, 62%) 100%);
+    --shadow-glow: 0 0 20px hsla(340, 75%, 62%, 0.4);
+}
+
+body.aura-amber {
+    --accent-violet: hsl(38, 92%, 55%);
+    --accent-rose: hsl(15, 92%, 55%);
+    --gradient-btn: linear-gradient(135deg, hsl(38, 92%, 55%) 0%, hsl(15, 92%, 55%) 100%);
+    --shadow-glow: 0 0 20px hsla(38, 92%, 55%, 0.4);
+}
+
+/* PWA Install Banner Style */
+.install-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 2rem;
+    margin-bottom: 2rem;
+    border-left: 4px solid var(--accent-violet);
+    animation: popIn 0.4s ease-out forwards;
+}
+
+.install-content {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.install-icon {
+    width: 28px;
+    height: 28px;
+    color: var(--accent-violet);
+}
+
+.install-text h3 {
+    font-size: 1.1rem;
+    margin-bottom: 2px;
+}
+
+.install-text p {
+    font-size: 0.85rem;
+}
+
+.install-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+@media (max-width: 768px) {
+    .install-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.25rem;
+        padding: 1.25rem;
+    }
+    .install-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}

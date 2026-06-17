@@ -299,8 +299,13 @@ export class ValuesSorter {
             pool = [...pool, ...this.sorted.medium];
         }
         
+        // If still fewer than 5 candidates, pull from Low priority to prevent deadlock
+        if (pool.length < 5) {
+            pool = [...pool, ...this.sorted.low];
+        }
+        
         if (pool.length === 0) {
-            // Edge case: User put everything in low priority
+            // Edge case: User put everything in low priority and somehow empty
             pool = [...VALUES_DATA];
         }
 

@@ -32,6 +32,42 @@ export class AuraCanvas {
         window.addEventListener('mousemove', (e) => this.handleMouseMove(e));
     }
 
+    updateColors(themeName) {
+        if (themeName === 'teal') {
+            this.colors = [
+                'rgba(0, 150, 136, 0.16)', // Teal
+                'rgba(76, 175, 80, 0.14)',  // Green
+                'rgba(0, 188, 212, 0.14)',  // Cyan
+                'rgba(33, 150, 243, 0.12)'  // Blue
+            ];
+        } else if (themeName === 'rose') {
+            this.colors = [
+                'rgba(233, 30, 99, 0.16)',  // Rose
+                'rgba(156, 39, 176, 0.14)', // Purple
+                'rgba(224, 64, 251, 0.14)', // Magenta
+                'rgba(244, 67, 54, 0.12)'   // Red
+            ];
+        } else if (themeName === 'amber') {
+            this.colors = [
+                'rgba(255, 152, 0, 0.16)',  // Orange
+                'rgba(255, 193, 7, 0.16)',  // Amber
+                'rgba(255, 87, 34, 0.12)',  // Deep Orange
+                'rgba(255, 235, 59, 0.12)'  // Yellow
+            ];
+        } else {
+            this.colors = [
+                'rgba(103, 58, 183, 0.15)', // Violet
+                'rgba(0, 150, 136, 0.15)',   // Teal
+                'rgba(233, 30, 99, 0.12)',   // Rose
+                'rgba(33, 150, 243, 0.12)'    // Blue
+            ];
+        }
+        
+        this.particles.forEach(p => {
+            p.color = this.colors[Math.floor(Math.random() * this.colors.length)];
+        });
+    }
+
     init() {
         this.resize();
         this.particles = [];

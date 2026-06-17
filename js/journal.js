@@ -91,11 +91,7 @@ export class PromptJournal {
 
         this.textarea.addEventListener('input', () => {
             const text = this.textarea.value;
-            const len = text.length;
-            this.charCounter.innerText = len;
-            
-            // Enable save if >= 50 characters
-            const isValid = len >= 50;
+            const isValid = this.updateCounterUI(text);
             this.saveBtn.disabled = !isValid;
 
             if (isValid) {
@@ -119,22 +115,31 @@ export class PromptJournal {
         });
     }
 
+    updateCounterUI(text) {
+        const len = text.length;
+        const trimmed = text.trim();
+        const wordsCount = trimmed ? trimmed.split(/\s+/).length : 0;
+        this.charCounter.innerText = `${len} characters | ${wordsCount} words`;
+        return wordsCount >= 10;
+    }
+
     start() {
         // Load existing text if saved
         if (this.app.state.journal) {
-            this.textarea.value = this.app.state.journal.text;
-            this.charCounter.innerText = this.app.state.journal.text.length;
-            this.saveBtn.disabled = false;
+            const text = this.app.state.journal.text;
+            this.textarea.value = text;
+            const isValid = this.updateCounterUI(text);
+            this.saveBtn.disabled = !isValid;
             
             // Find index of saved prompt, if exists
             const savedPromptIdx = REFLECTION_PROMPTS.indexOf(this.app.state.journal.prompt);
             if (savedPromptIdx !== -1) {
                 this.promptIdx = savedPromptIdx;
             }
-            this.analyzeText(this.app.state.journal.text);
+            this.analyzeText(text);
         } else {
             this.textarea.value = "";
-            this.charCounter.innerText = "0";
+            this.updateCounterUI("");
             this.saveBtn.disabled = true;
             this.resetAnalysis();
         }

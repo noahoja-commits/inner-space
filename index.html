@@ -60,15 +60,36 @@
                     <span class="logo-text">InnerSpace</span>
                 </div>
                 <div class="user-greeting">
-                    <span>Welcome back, <strong id="greeting-name">Explorer</strong></span>
-                    <button id="reset-data-btn" class="btn btn-icon-text btn-outline btn-sm" title="Reset all data">
+                    <span>Welcome, <strong id="greeting-name">Explorer</strong></span>
+                    <div class="aura-selector" title="Align your Aura Energy">
+                        <span class="aura-lbl">Aura:</span>
+                        <button class="aura-dot-btn active" data-aura="violet" style="background: hsl(262, 80%, 65%);" title="Wisdom / Violet"></button>
+                        <button class="aura-dot-btn" data-aura="teal" style="background: hsl(174, 75%, 45%);" title="Harmony / Teal"></button>
+                        <button class="aura-dot-btn" data-aura="rose" style="background: hsl(340, 75%, 62%);" title="Passion / Rose"></button>
+                        <button class="aura-dot-btn" data-aura="amber" style="background: hsl(38, 92%, 55%);" title="Creativity / Amber"></button>
+                    </div>
+                    <button id="reset-data-btn" class="btn btn-icon btn-outline btn-sm" title="Reset Journey">
                         <i data-lucide="rotate-ccw"></i>
-                        <span>Reset Journey</span>
                     </button>
                 </div>
             </header>
 
             <main class="dashboard-content">
+                <!-- PWA Install Banner -->
+                <div id="pwa-install-banner" class="install-banner glass-card" style="display: none;">
+                    <div class="install-content">
+                        <i data-lucide="smartphone" class="install-icon"></i>
+                        <div class="install-text">
+                            <h3>Install InnerSpace</h3>
+                            <p>Add to your home screen for quick offline access.</p>
+                        </div>
+                    </div>
+                    <div class="install-actions">
+                        <button id="pwa-install-btn" class="btn btn-primary btn-sm">Install</button>
+                        <button id="pwa-dismiss-btn" class="btn btn-outline btn-sm">Dismiss</button>
+                    </div>
+                </div>
+
                 <section class="dashboard-hero">
                     <div class="hero-text">
                         <h1>Your Self-Discovery Dashboard</h1>
@@ -600,7 +621,7 @@
                             </div>
                             <div class="bp-wheel-layout">
                                 <div class="bp-radar-wrapper">
-                                    <svg id="bp-wheel-static-svg" viewBox="0 0 300 300" width="100%" height="220px">
+                                    <svg id="bp-wheel-static-svg" viewBox="0 0 400 400" width="100%" height="220px">
                                         <!-- Copy of life wheel radar -->
                                     </svg>
                                 </div>

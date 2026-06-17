@@ -15,7 +15,8 @@ class InnerSpaceApp {
             values: null,
             wheel: null,
             personality: null,
-            journal: null
+            journal: null,
+            aura: 'violet'
         };
         
         this.currentScreen = 'welcome-screen';
@@ -55,9 +56,56 @@ class InnerSpaceApp {
         this.bpName = document.getElementById('bp-user-name');
         this.bpDate = document.getElementById('bp-date');
         this.bpPrintBtn = document.getElementById('print-blueprint-btn');
+
+        // PWA Install Banner & Aura Selectors
+        this.installBanner = document.getElementById('pwa-install-banner');
+        this.installBtn = document.getElementById('pwa-install-btn');
+        this.dismissBtn = document.getElementById('pwa-dismiss-btn');
+        this.auraSelectorButtons = document.querySelectorAll('.aura-dot-btn');
     }
 
     bindGlobalEvents() {
+        // Aura Theme Selector buttons
+        this.auraSelectorButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const aura = e.currentTarget.getAttribute('data-aura');
+                this.setAuraTheme(aura);
+            });
+        });
+
+        // PWA Install Prompt handling
+        this.deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            this.deferredPrompt = e;
+            if (this.installBanner) {
+                this.installBanner.style.display = 'flex';
+            }
+        });
+
+        if (this.installBtn) {
+            this.installBtn.addEventListener('click', () => {
+                if (this.deferredPrompt) {
+                    this.deferredPrompt.prompt();
+                    this.deferredPrompt.userChoice.then(choiceResult => {
+                        if (choiceResult.outcome === 'accepted') {
+                            this.showToast('InnerSpace added to device!', 'check');
+                        }
+                        this.deferredPrompt = null;
+                        if (this.installBanner) this.installBanner.style.display = 'none';
+                    });
+                }
+            });
+        }
+
+        if (this.dismissBtn) {
+            this.dismissBtn.addEventListener('click', () => {
+                if (this.installBanner) {
+                    this.installBanner.style.display = 'none';
+                }
+            });
+        }
+
         // Welcome Start Click
         this.startBtn.addEventListener('click', () => {
             const name = this.usernameInput.value.trim();
@@ -86,8 +134,10 @@ class InnerSpaceApp {
                     values: null,
                     wheel: null,
                     personality: null,
-                    journal: null
+                    journal: null,
+                    aura: 'violet'
                 };
+                this.setAuraTheme('violet');
                 this.showToast('Journey reset successfully.', 'info');
                 this.usernameInput.value = '';
                 this.showScreen('welcome-screen');
@@ -120,7 +170,32 @@ class InnerSpaceApp {
         });
     }
 
+    setAuraTheme(aura) {
+        document.body.className = '';
+        if (aura && aura !== 'violet') {
+            document.body.classList.add(`aura-${aura}`);
+        }
+        
+        this.state.aura = aura;
+        this.saveState();
+        
+        this.auraSelectorButtons.forEach(btn => {
+            if (btn.getAttribute('data-aura') === aura) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+        
+        if (this.canvas) {
+            this.canvas.updateColors(aura);
+        }
+    }
+
     launch() {
+        // Apply Aura Theme on startup
+        this.setAuraTheme(this.state.aura || 'violet');
+
         // Redirect directly to dashboard if username is already cached
         if (this.state.username) {
             this.showScreen('dashboard-screen');
