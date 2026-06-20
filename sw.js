@@ -15,6 +15,8 @@ const ASSETS_TO_CACHE = [
     './js/wheel.js',
     './js/personality.js',
     './js/journal.js',
+    './js/breath.js',
+    './js/history.js',
     './icon-192.png',
     './icon-512.png'
 ];

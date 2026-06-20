@@ -11,6 +11,7 @@ export class AuraCanvas {
         
         this.particles = [];
         this.particleCount = 40;
+        this.flowRate = 1.0; // Dynamic velocity scale
         
         this.mouse = {
             x: null,
@@ -108,12 +109,12 @@ export class AuraCanvas {
             let p = this.particles[i];
             
             // Pulse radius slightly
-            p.pulseTime += p.pulseSpeed;
+            p.pulseTime += p.pulseSpeed * this.flowRate;
             let currentRadius = p.radius + Math.sin(p.pulseTime) * 15;
 
             // Update position
-            p.x += p.vx;
-            p.y += p.vy;
+            p.x += p.vx * this.flowRate;
+            p.y += p.vy * this.flowRate;
 
             // Bounce off edges
             if (p.x - p.radius < 0 || p.x + p.radius > this.canvas.width) p.vx = -p.vx;

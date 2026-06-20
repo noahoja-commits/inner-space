@@ -26,7 +26,34 @@
     <div class="ambient-glow"></div>
 
     <!-- Main App Container -->
-    <div id="app-container">
+    <div id="app-container" class="has-nav">
+        <!-- Persistent Navigation Bar -->
+        <nav class="app-nav-bar" id="main-nav-bar" style="display: none;">
+            <div class="nav-logo">
+                <i data-lucide="compass" class="nav-logo-icon"></i>
+                <span class="nav-logo-text">InnerSpace</span>
+            </div>
+            <div class="nav-links">
+                <button class="nav-link active" data-tab="dashboard-screen">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Hub</span>
+                </button>
+                <button class="nav-link" data-tab="breath-screen">
+                    <i data-lucide="wind"></i>
+                    <span>Breath Sync</span>
+                </button>
+                <button class="nav-link" data-tab="history-screen">
+                    <i data-lucide="history"></i>
+                    <span>Timeline</span>
+                </button>
+                <button class="nav-link" data-tab="blueprint-screen" id="nav-link-blueprint" disabled>
+                    <i data-lucide="sparkles"></i>
+                    <span>Blueprint</span>
+                </button>
+            </div>
+        </nav>
+        
+        <div class="main-content-area">
         
         <!-- ==================== ONBOARDING / WELCOME SCREEN ==================== -->
         <section id="welcome-screen" class="screen active">
@@ -93,7 +120,16 @@
                 <section class="dashboard-hero">
                     <div class="hero-text">
                         <h1>Your Self-Discovery Dashboard</h1>
-                        <p>Complete the four reflective pathways to unlock your <strong>Personal Blueprint</strong>.</p>
+                        <p>Complete the four pathways to unlock your <strong>Personal Blueprint</strong>.</p>
+                        
+                        <!-- Aura Flow energy level check-in -->
+                        <div class="flow-slider-card glass-card">
+                            <div class="flow-slider-header">
+                                <i data-lucide="activity" class="flow-icon"></i>
+                                <span>Aura Energy Flow: <strong id="flow-intensity-lbl">Balanced</strong></span>
+                            </div>
+                            <input type="range" min="10" max="150" value="40" id="aura-flow-slider" class="aura-flow-input">
+                        </div>
                     </div>
                     <div class="blueprint-unlock-widget glass-card">
                         <div class="progress-circle-container">
@@ -538,6 +574,127 @@
             </div>
         </section>
 
+        <!-- ==================== MODULE: BREATH SYNC SCREEN ==================== -->
+        <section id="breath-screen" class="screen">
+            <header class="module-header">
+                <div class="header-title-wrapper">
+                    <span class="module-category">Mindfulness Coach</span>
+                    <h1>Aura Breath Sync</h1>
+                </div>
+            </header>
+
+            <div class="module-content layout-two-col">
+                <div class="left-panel col-visual">
+                    <div class="breath-sync-container">
+                        <!-- Pulse Ring Visualizer -->
+                        <div class="breath-ring-wrapper">
+                            <div class="breath-ring-element" id="breath-pulse-ring"></div>
+                            <div class="breath-inner-content">
+                                <span id="breath-state-text">Ready</span>
+                                <span id="breath-timer-text" class="timer-countdown">00:00</span>
+                            </div>
+                        </div>
+                        <div class="breath-cycles-display">
+                            Cycles completed: <strong id="breath-cycles-count">0</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-panel col-controls glass-card">
+                    <h2>Calm Your Mind</h2>
+                    <p>Sync your breathing with the glowing aura ring. Select a pacing technique below and click start.</p>
+                    
+                    <div class="input-group">
+                        <label for="breath-technique-select">Breathing Technique</label>
+                        <select id="breath-technique-select" class="btn-secondary" style="background: hsla(245,30%,8%,0.6); color:white; border: 1px solid var(--border-glass); border-radius:12px; padding:1rem; font-size:1rem; outline:none; cursor:pointer;">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+
+                    <div class="tech-info-card">
+                        <p id="breath-tech-desc">Loading technique description...</p>
+                    </div>
+
+                    <div class="panel-actions" style="margin-top: 2rem;">
+                        <button id="breath-start-btn" class="btn btn-primary btn-lg w-full">
+                            <i data-lucide="play"></i>
+                            <span>Start Session</span>
+                        </button>
+                        <button id="breath-stop-btn" class="btn btn-outline btn-lg w-full" style="display: none;">
+                            <i data-lucide="square"></i>
+                            <span>End Session</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== MODULE: HISTORY SCREEN ==================== -->
+        <section id="history-screen" class="screen">
+            <header class="module-header">
+                <div class="header-title-wrapper">
+                    <span class="module-category">Growth Logs</span>
+                    <h1>Alignment Timeline</h1>
+                </div>
+                <button id="save-snapshot-btn" class="btn btn-primary btn-sm">
+                    <i data-lucide="camera"></i>
+                    <span>Save Alignment Snapshot</span>
+                </button>
+            </header>
+
+            <div class="module-content layout-two-col">
+                <!-- Left panel: Historical snapshots list -->
+                <div class="left-panel flex-col gap-1-5">
+                    <div class="history-stats-row">
+                        <div class="history-stat-card glass-card">
+                            <span class="stat-lbl">Snapshots logged</span>
+                            <h2 id="history-total-snapshots">0</h2>
+                        </div>
+                        <div class="history-stat-card glass-card">
+                            <span class="stat-lbl">Mindfulness Logs</span>
+                            <h2 id="history-total-breath-min">0m</h2>
+                        </div>
+                    </div>
+                    
+                    <h3>Your Alignment Snapshots</h3>
+                    <div class="snapshots-timeline-list" id="history-snapshots-list">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Right panel: Trend Chart & Milestones -->
+                <div class="right-panel flex-col gap-2">
+                    <div class="trend-chart-card glass-card">
+                        <div class="chart-header" style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--border-glass); padding-bottom: 0.75rem; margin-bottom: 1rem;">
+                            <h3 style="font-size:1.05rem;">Category Growth Trend</h3>
+                            <select id="trend-category-select" class="btn-secondary btn-sm" style="background: hsla(245,30%,8%,0.6); color:white; border: 1px solid var(--border-glass); border-radius:8px; padding:0.4rem; font-size:0.85rem; outline:none; cursor:pointer;">
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="chart-body sparkline-container">
+                            <svg id="trend-sparkline-svg" viewBox="0 0 320 100" width="100%" height="150px">
+                                <!-- Sparkline SVG trend path -->
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="milestones-card glass-card" style="padding: 1.5rem;">
+                        <h3 style="margin-bottom:1rem; font-size:1.05rem;">Growth Milestones</h3>
+                        <div class="milestones-list" id="history-milestones-list">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <div class="breath-logs-card glass-card" style="padding: 1.5rem;">
+                        <h3 style="margin-bottom:1rem; font-size:1.05rem;">Recent Breath Sync Sessions</h3>
+                        <ul class="breath-log-ul" id="history-breath-log" style="list-style:none; display:flex; flex-direction:column; gap:0.5rem;">
+                            <!-- Populated dynamically -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- ==================== SYNTHESIS: PERSONAL BLUEPRINT SCREEN ==================== -->
         <section id="blueprint-screen" class="screen">
             <header class="blueprint-header">
@@ -599,6 +756,23 @@
                             </div>
                         </div>
 
+                        <!-- Spirit Element Card -->
+                        <div class="blueprint-section glass-card" id="bp-element-section">
+                            <div class="section-title">
+                                <i data-lucide="droplet" id="bp-element-main-icon"></i>
+                                <h2>Spirit Alignment Element</h2>
+                            </div>
+                            <div class="bp-element-body" style="display:flex; align-items:center; gap: 1.25rem;">
+                                <svg id="bp-element-icon-svg" viewBox="0 0 100 100" width="64" height="64" style="flex-shrink:0;">
+                                    <!-- Dynamic SVG element drawing injected by app.js -->
+                                </svg>
+                                <div>
+                                    <h3 id="bp-element-name" style="font-size:1.4rem; color:var(--accent-rose);">Ocean (Water)</h3>
+                                    <p id="bp-element-desc" style="font-size:0.85rem; line-height:1.4; margin-top:4px;">You are highly attuned to relationships and emotional frequencies. Like water, you are adaptable, supportive, and flow easily around obstacles, drawing power from deep connections.</p>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Core Values Card -->
                         <div class="blueprint-section glass-card" id="bp-values-section">
                             <div class="section-title">
@@ -653,9 +827,10 @@
                     </div>
                 </div>
             </main>
-        </section>
+         </section>
 
-    </div>
+        </div> <!-- main-content-area -->
+     </div> <!-- app-container -->
 
     <!-- Notification System -->
     <div id="toast" class="toast-notification">

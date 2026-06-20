@@ -7,6 +7,8 @@ import { ValuesSorter } from './values.js';
 import { LifeWheel, WHEEL_CATEGORIES, WHEEL_ADVICE } from './wheel.js';
 import { PersonalityPrism } from './personality.js';
 import { PromptJournal } from './journal.js';
+import { BreathSync } from './breath.js';
+import { AlignmentHistory } from './history.js';
 
 class InnerSpaceApp {
     constructor() {
@@ -16,7 +18,10 @@ class InnerSpaceApp {
             wheel: null,
             personality: null,
             journal: null,
-            aura: 'violet'
+            aura: 'violet',
+            snapshots: [],
+            breathHistory: [],
+            flowRate: 40
         };
         
         this.currentScreen = 'welcome-screen';
@@ -32,6 +37,8 @@ class InnerSpaceApp {
         this.wheelModule = new LifeWheel(this);
         this.personalityModule = new PersonalityPrism(this);
         this.journalModule = new PromptJournal(this);
+        this.breathModule = new BreathSync(this);
+        this.historyModule = new AlignmentHistory(this);
 
         this.initDOMElements();
         this.bindGlobalEvents();
@@ -62,6 +69,15 @@ class InnerSpaceApp {
         this.installBtn = document.getElementById('pwa-install-btn');
         this.dismissBtn = document.getElementById('pwa-dismiss-btn');
         this.auraSelectorButtons = document.querySelectorAll('.aura-dot-btn');
+
+        // Navigation elements
+        this.navBar = document.getElementById('main-nav-bar');
+        this.navLinks = document.querySelectorAll('.nav-link');
+        this.blueprintNavLink = document.getElementById('nav-link-blueprint');
+
+        // Dashboard Aura Flow check-in
+        this.flowSlider = document.getElementById('aura-flow-slider');
+        this.flowIntensityLbl = document.getElementById('flow-intensity-lbl');
     }
 
     bindGlobalEvents() {
@@ -135,9 +151,13 @@ class InnerSpaceApp {
                     wheel: null,
                     personality: null,
                     journal: null,
-                    aura: 'violet'
+                    aura: 'violet',
+                    snapshots: [],
+                    breathHistory: [],
+                    flowRate: 40
                 };
                 this.setAuraTheme('violet');
+                this.setAuraFlow(40);
                 this.showToast('Journey reset successfully.', 'info');
                 this.usernameInput.value = '';
                 this.showScreen('welcome-screen');
@@ -192,11 +212,34 @@ class InnerSpaceApp {
         }
     }
 
-    launch() {
-        // Apply Aura Theme on startup
-        this.setAuraTheme(this.state.aura || 'violet');
+    setAuraFlow(val) {
+        this.state.flowRate = val;
+        this.saveState();
+        
+        if (this.canvas) {
+            this.canvas.flowRate = val / 40;
+        }
 
-        // Redirect directly to dashboard if username is already cached
+        if (this.flowSlider) {
+            this.flowSlider.value = val;
+        }
+
+        let lbl = "Balanced";
+        if (val < 18) lbl = "Quiet & Introspective";
+        else if (val < 32) lbl = "Calm Flow";
+        else if (val < 65) lbl = "Balanced";
+        else if (val < 100) lbl = "High Energy";
+        else lbl = "Radiant & Rapid";
+        
+        if (this.flowIntensityLbl) {
+            this.flowIntensityLbl.innerText = lbl;
+        }
+    }
+
+    launch() {
+        this.setAuraTheme(this.state.aura || 'violet');
+        this.setAuraFlow(this.state.flowRate || 40);
+
         if (this.state.username) {
             this.showScreen('dashboard-screen');
         } else {
@@ -208,19 +251,34 @@ class InnerSpaceApp {
      * SPA Screen Router
      */
     showScreen(screenId) {
-        // Fade out active screen
         const activeScreen = document.querySelector('.screen.active');
         if (activeScreen) {
             activeScreen.classList.remove('active');
         }
 
-        // Activate new screen
         const targetScreen = document.getElementById(screenId);
         if (targetScreen) {
             this.currentScreen = screenId;
             targetScreen.classList.add('active');
             
-            // Trigger specific module start hooks
+            // 1. Navigation bar visibility
+            const navTabs = ['dashboard-screen', 'breath-screen', 'history-screen', 'blueprint-screen'];
+            if (navTabs.includes(screenId)) {
+                this.navBar.style.display = 'flex';
+                
+                // Highlight active nav tab
+                this.navLinks.forEach(link => {
+                    if (link.getAttribute('data-tab') === screenId) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            } else {
+                this.navBar.style.display = 'none';
+            }
+
+            // 2. Trigger specific module start hooks
             if (screenId === 'dashboard-screen') {
                 this.updateDashboardProgress();
             } else if (screenId === 'values-screen') {
@@ -231,12 +289,15 @@ class InnerSpaceApp {
                 this.personalityModule.start();
             } else if (screenId === 'journal-screen') {
                 this.journalModule.start();
+            } else if (screenId === 'breath-screen') {
+                this.breathModule.start();
+            } else if (screenId === 'history-screen') {
+                this.historyModule.start();
             } else if (screenId === 'blueprint-screen') {
                 this.renderBlueprintPage();
             }
         }
         
-        // Ensure Lucide icon CDN loads correctly
         lucide.createIcons();
     }
 
@@ -272,17 +333,18 @@ class InnerSpaceApp {
         const radius = 50;
         const circumference = 2 * Math.PI * radius; // ~314.16
         const offset = circumference - (percentage / 100) * circumference;
-        
         this.progressRing.style.strokeDashoffset = offset;
         this.progressPercentageText.innerText = `${percentage}%`;
 
-        // Update Blueprint widget status
+        // Update Blueprint widget status & nav tab
         if (completedCount === 4) {
             this.blueprintStatusText.innerText = "Congratulations! Your blueprint is complete.";
             this.viewBlueprintBtn.disabled = false;
+            this.blueprintNavLink.disabled = false;
         } else {
             this.blueprintStatusText.innerText = `${4 - completedCount} more pathways needed to unlock blueprint.`;
             this.viewBlueprintBtn.disabled = true;
+            this.blueprintNavLink.disabled = true;
         }
     }
 
@@ -329,12 +391,9 @@ class InnerSpaceApp {
         // 3. Render Life Wheel static radar & gaps
         const bpSvg = document.getElementById('bp-wheel-static-svg');
         if (this.state.wheel) {
-            // Put scores in module instance, then draw
             this.wheelModule.scores = { ...this.state.wheel };
             this.wheelModule.drawRadar(bpSvg, false);
 
-            // Compute alignment gaps
-            // Gap = Desired Growth - Current Satisfaction
             let gaps = [];
             WHEEL_CATEGORIES.forEach(cat => {
                 const s = this.state.wheel[cat.id];
@@ -342,14 +401,11 @@ class InnerSpaceApp {
                 gaps.push({ id: cat.id, name: cat.name, diff: diff });
             });
 
-            // Sort gaps descending (largest gap first)
             gaps.sort((a, b) => b.diff - a.diff);
 
-            // List top 2 areas that need attention
             const gapsList = document.getElementById('bp-gaps-list');
             gapsList.innerHTML = '';
             
-            // Take the top 2 positive gaps, or top 2 categories
             const targetGaps = gaps.slice(0, 2);
             targetGaps.forEach(gap => {
                 const gapCard = document.createElement('div');
@@ -380,6 +436,71 @@ class InnerSpaceApp {
                 cloud.appendChild(tag);
             });
         }
+
+        // 5. Render Spirit Element Card
+        const elem = this.computeSpiritElement();
+        if (elem) {
+            document.getElementById('bp-element-name').innerText = elem.name;
+            document.getElementById('bp-element-name').style.color = `var(--accent-${elem.id === 'fire' ? 'rose' : (elem.id === 'air' ? 'teal' : (elem.id === 'water' ? 'blue' : 'amber'))})`;
+            document.getElementById('bp-element-desc').innerText = elem.desc;
+            
+            const svgIcon = document.getElementById('bp-element-icon-svg');
+            svgIcon.innerHTML = elem.svg;
+            
+            const mainIcon = document.getElementById('bp-element-main-icon');
+            if (mainIcon) {
+                const iconsMap = { fire: 'flame', air: 'wind', water: 'droplets', earth: 'mountain' };
+                mainIcon.setAttribute('data-lucide', iconsMap[elem.id] || 'droplet');
+            }
+        }
+    }
+
+    computeSpiritElement() {
+        const pers = this.state.personality;
+        if (!pers) return null;
+
+        const { curiosity, resilience, empathy, focus } = pers.scores;
+        
+        const elements = [
+            {
+                id: 'fire',
+                name: 'Flame (Fire)',
+                tag: 'Focus & Drive',
+                desc: 'Your spirit aligns with Fire. Driven by Focus and Resilience, you forge path milestones with heat and intense dedication. Obstacles feed your strength rather than extinguishing it. Beware of burnout and remember to nourish your boundaries.',
+                svg: `<path d="M50 85 C30 75 15 45 35 20 C30 30 32 40 38 45 C40 25 50 5 70 25 C58 30 55 40 60 50 C70 40 75 30 73 17 C82 40 80 65 50 85 Z" fill="none" stroke="var(--accent-rose)" stroke-width="3" stroke-linejoin="round" class="element-glow-glow"/>`
+            },
+            {
+                id: 'air',
+                name: 'Breeze (Air)',
+                tag: 'Curiosity & Exploration',
+                desc: 'Your spirit aligns with Air. Driven by Curiosity and Openness, you drift freely between thoughts, ideas, and interests. You are a natural innovator, lifting heavy ideas with ease. Watch out for restlessness, and anchor your projects down.',
+                svg: `<path d="M15 45 C35 45 35 35 55 35 C70 35 75 45 65 50 C60 52 50 45 55 38 M25 60 C40 60 45 52 60 52 C75 52 80 62 70 65 C62 67 55 58 60 53 M20 25 C30 25 35 18 45 18 C55 18 60 25 52 28" fill="none" stroke="var(--accent-teal)" stroke-width="3" stroke-linecap="round" class="element-glow-glow"/>`
+            },
+            {
+                id: 'water',
+                name: 'Ocean (Water)',
+                tag: 'Empathy & Depth',
+                desc: 'Your spirit aligns with Water. Guided by Empathy and deep connection, you flow gracefully around structural obstacles. You hold massive emotional intelligence, healing and connecting those around you. Watch out for taking on others\' weights.',
+                svg: `<path d="M10 50 C20 40 30 40 40 50 C50 60 60 60 70 50 C80 40 90 40 100 50 M10 70 C20 60 30 60 40 70 C50 80 60 80 70 70 C80 60 90 60 100 70 M10 30 C20 20 30 20 40 30 C50 40 60 40 70 30 C80 20 90 20 100 30" fill="none" stroke="var(--accent-blue)" stroke-width="3" stroke-linecap="round" class="element-glow-glow"/>`
+            },
+            {
+                id: 'earth',
+                name: 'Earth (Stone)',
+                tag: 'Resilience & Safety',
+                desc: 'Your spirit aligns with Earth. Anchored by Resilience, safety, and stability, you are unshakeable. You build foundations that endure through time. Others look to you for protection and ground. Remember to remain flexible to unexpected changes.',
+                svg: `<polygon points="50,15 15,85 85,85" fill="none" stroke="var(--accent-amber)" stroke-width="3" stroke-linejoin="round" class="element-glow-glow"/><polygon points="65,45 45,85 85,85" fill="none" stroke="var(--accent-amber)" stroke-width="1.5" stroke-linejoin="round"/>`
+            }
+        ];
+
+        const dims = [
+            { id: 'fire', val: (focus + resilience) / 2 },
+            { id: 'air', val: curiosity },
+            { id: 'water', val: empathy },
+            { id: 'earth', val: resilience }
+        ];
+
+        dims.sort((a, b) => b.val - a.val);
+        return elements.find(el => el.id === dims[0].id);
     }
 
     /**
