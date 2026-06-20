@@ -160,6 +160,15 @@
                     </div>
                 </section>
 
+                <!-- Zen Quotes Widget -->
+                <div id="zen-quote-container" class="glass-card" style="padding: 1.25rem 2rem; margin-bottom: 2.5rem; display: flex; align-items: center; gap: 1.5rem; background: hsla(0, 0%, 100%, 0.01);">
+                    <i data-lucide="quote" style="width: 24px; height: 24px; color: var(--accent-amber); flex-shrink: 0; opacity: 0.8;"></i>
+                    <div style="flex-grow: 1;">
+                        <p id="zen-quote-text" style="font-family: var(--font-heading); font-size: 1.02rem; font-style: italic; color: white; line-height: 1.5; margin: 0;"></p>
+                        <span id="zen-quote-author" style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-top: 4px;"></span>
+                    </div>
+                </div>
+
                 <!-- Pathways Grid -->
                 <section class="pathways-grid">
                     <!-- Module 1: Core Values -->
@@ -623,6 +632,13 @@
                         <button id="breath-stop-btn" class="btn btn-outline btn-lg w-full" style="display: none;">
                             <i data-lucide="square"></i>
                             <span>End Session</span>
+                        </button>
+                    </div>
+
+                    <div class="panel-actions" style="margin-top: 1rem;">
+                        <button id="breath-audio-toggle" class="btn btn-outline w-full" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: 12px; padding: 0.75rem; background: hsla(0,0%,100%,0.02);">
+                            <i data-lucide="volume-x"></i>
+                            <span>Sound: Off</span>
                         </button>
                     </div>
                 </div>

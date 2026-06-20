@@ -50,6 +50,12 @@ export class AlignmentHistory {
                 opt.innerText = cat.name;
                 this.trendCatSelect.appendChild(opt);
             });
+
+            // Append Journal Reflection Sentiment option
+            const opt = document.createElement('option');
+            opt.value = 'journal_sentiment';
+            opt.innerText = 'Reflection Sentiment';
+            this.trendCatSelect.appendChild(opt);
         }
     }
 
@@ -70,7 +76,8 @@ export class AlignmentHistory {
             timestamp: Date.now(),
             wheel: { ...this.app.state.wheel },
             personality: this.app.state.personality ? { ...this.app.state.personality.scores } : null,
-            archetype: this.app.state.personality ? this.app.state.personality.archetype.name : 'Not Completed'
+            archetype: this.app.state.personality ? this.app.state.personality.archetype.name : 'Not Completed',
+            journalSentiment: this.app.state.journal ? this.app.state.journal.sentiment.pct : null
         };
 
         const snapshots = this.app.state.snapshots || [];
@@ -191,21 +198,37 @@ export class AlignmentHistory {
 
         const maxIdx = snapshots.length - 1;
         const points = [];
+        const isSentiment = this.selectedTrendCategory === 'journal_sentiment';
 
         snapshots.forEach((snap, idx) => {
-            const score = snap.wheel[this.selectedTrendCategory] ? snap.wheel[this.selectedTrendCategory].satis : 5;
+            let score;
+            let labelText;
+            let y;
+            
+            if (isSentiment) {
+                score = snap.journalSentiment !== undefined && snap.journalSentiment !== null ? snap.journalSentiment : null;
+                if (score === null) score = 50; // default to neutral if not recorded
+                y = height - padding - (score / 100) * (height - 2 * padding);
+                labelText = `${score}%`;
+            } else {
+                score = snap.wheel[this.selectedTrendCategory] ? snap.wheel[this.selectedTrendCategory].satis : 5;
+                y = height - padding - ((score - 1) / 9) * (height - 2 * padding);
+                labelText = score.toString();
+            }
             
             // X coordinate (stretched across width)
             const x = padding + (idx / maxIdx) * (width - 2 * padding);
-            // Y coordinate (score 1 is bottom, 10 is top)
-            const y = height - padding - ((score - 1) / 9) * (height - 2 * padding);
             
-            points.push({ x, y, score, date: snap.date });
+            points.push({ x, y, score, labelText, date: snap.date });
         });
 
-        // 1. Draw grid line paths (y=score 1 and y=score 10)
-        for (let scoreLevel of [1, 5, 10]) {
-            const gridY = height - padding - ((scoreLevel - 1) / 9) * (height - 2 * padding);
+        // 1. Draw grid line paths (y levels)
+        const gridLevels = isSentiment ? [10, 50, 90] : [1, 5, 10];
+        for (let level of gridLevels) {
+            const gridY = isSentiment 
+                ? height - padding - (level / 100) * (height - 2 * padding)
+                : height - padding - ((level - 1) / 9) * (height - 2 * padding);
+                
             const gridLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             gridLine.setAttribute('x1', padding);
             gridLine.setAttribute('y1', gridY);
@@ -221,7 +244,7 @@ export class AlignmentHistory {
         const pointsString = points.map(p => `${p.x},${p.y}`).join(' ');
         polyline.setAttribute('points', pointsString);
         polyline.setAttribute('fill', 'none');
-        polyline.setAttribute('stroke', 'var(--accent-teal)');
+        polyline.setAttribute('stroke', isSentiment ? 'var(--accent-amber)' : 'var(--accent-teal)');
         polyline.setAttribute('stroke-width', '3');
         polyline.setAttribute('stroke-linecap', 'round');
         polyline.setAttribute('stroke-linejoin', 'round');
@@ -234,11 +257,11 @@ export class AlignmentHistory {
             circle.setAttribute('cy', p.y);
             circle.setAttribute('r', '4');
             circle.setAttribute('fill', 'white');
-            circle.setAttribute('stroke', 'var(--accent-teal)');
+            circle.setAttribute('stroke', isSentiment ? 'var(--accent-amber)' : 'var(--accent-teal)');
             circle.setAttribute('stroke-width', '2');
             
             const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
-            title.textContent = `${p.date}: Score ${p.score}`;
+            title.textContent = `${p.date}: ${p.labelText}`;
             circle.appendChild(title);
             
             this.sparklineSvg.appendChild(circle);
@@ -251,7 +274,7 @@ export class AlignmentHistory {
             txt.setAttribute('fill', 'var(--text-primary)');
             txt.setAttribute('font-size', '8');
             txt.setAttribute('font-weight', '700');
-            txt.textContent = p.score;
+            txt.textContent = p.labelText;
             this.sparklineSvg.appendChild(txt);
         });
     }
@@ -288,6 +311,15 @@ export class AlignmentHistory {
         if (latestAvg > prevAvg) {
             const diff = (latestAvg - prevAvg).toFixed(1);
             this.addMilestoneUI("Overall Well-Being Lift", `Your overall Life Wheel satisfaction increased by +${diff} points! Excellent progress.`, 'heart');
+            milestonesFound++;
+        }
+
+        // Check if journal reflection sentiment score improved
+        const lSent = latest.journalSentiment !== undefined && latest.journalSentiment !== null ? latest.journalSentiment : null;
+        const pSent = previous.journalSentiment !== undefined && previous.journalSentiment !== null ? previous.journalSentiment : null;
+        if (lSent !== null && pSent !== null && lSent > pSent) {
+            const diff = lSent - pSent;
+            this.addMilestoneUI("Emotional Frequency Lift", `Your reflection sentiment score increased by +${diff}% (showing a more positive, energetic state)!`, 'smile');
             milestonesFound++;
         }
 

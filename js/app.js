@@ -10,6 +10,19 @@ import { PromptJournal } from './journal.js';
 import { BreathSync } from './breath.js';
 import { AlignmentHistory } from './history.js';
 
+const ZEN_QUOTES = [
+    { text: "Who looks outside, dreams; who looks inside, awakes.", author: "Carl Jung" },
+    { text: "Mindfulness isn't difficult, we just need to remember to do it.", author: "Sharon Salzberg" },
+    { text: "The privilege of a lifetime is to become who you truly are.", author: "Carl Jung" },
+    { text: "Quiet the mind and the soul will speak.", author: "Ma Jaya Sati Bhagavati" },
+    { text: "Breathe in deeply to bring your mind home to your body.", author: "Thich Nhat Hanh" },
+    { text: "Feelings come and go like clouds in a windy sky. Conscious breathing is my anchor.", author: "Thich Nhat Hanh" },
+    { text: "You are a volume in the divine book. A mirror to the power that created you.", author: "Rumi" },
+    { text: "The present moment is filled with joy and happiness. If you are attentive, you will see it.", author: "Thich Nhat Hanh" },
+    { text: "Muddy water is best cleared by leaving it alone.", author: "Alan Watts" },
+    { text: "To understand everything is to forgive everything.", author: "Gautama Buddha" }
+];
+
 class InnerSpaceApp {
     constructor() {
         this.state = {
@@ -78,6 +91,10 @@ class InnerSpaceApp {
         // Dashboard Aura Flow check-in
         this.flowSlider = document.getElementById('aura-flow-slider');
         this.flowIntensityLbl = document.getElementById('flow-intensity-lbl');
+
+        // Zen Quotes elements
+        this.quoteText = document.getElementById('zen-quote-text');
+        this.quoteAuthor = document.getElementById('zen-quote-author');
     }
 
     bindGlobalEvents() {
@@ -281,6 +298,7 @@ class InnerSpaceApp {
             // 2. Trigger specific module start hooks
             if (screenId === 'dashboard-screen') {
                 this.updateDashboardProgress();
+                this.displayRandomZenQuote();
             } else if (screenId === 'values-screen') {
                 this.valuesModule.start();
             } else if (screenId === 'wheel-screen') {
@@ -346,6 +364,13 @@ class InnerSpaceApp {
             this.viewBlueprintBtn.disabled = true;
             this.blueprintNavLink.disabled = true;
         }
+    }
+
+    displayRandomZenQuote() {
+        if (!this.quoteText || !this.quoteAuthor) return;
+        const randomQuote = ZEN_QUOTES[Math.floor(Math.random() * ZEN_QUOTES.length)];
+        this.quoteText.innerText = `"${randomQuote.text}"`;
+        this.quoteAuthor.innerText = `— ${randomQuote.author}`;
     }
 
     /**
