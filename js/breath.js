@@ -291,7 +291,7 @@ export class BreathSync {
             this.audioToggleBtn.querySelector('i').setAttribute('data-lucide', 'volume-2');
             this.audioToggleBtn.querySelector('span').innerText = 'Sound: On';
         }
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
     }
 
     updateTechniqueDesc() {

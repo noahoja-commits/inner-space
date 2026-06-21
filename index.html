@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Lucide Icons (pinned version so a CDN "latest" change can't break the app) -->
+    <script src="https://unpkg.com/lucide@0.460.0"></script>
     <link rel="stylesheet" href="style.css">
     
     <!-- PWA Manifest & Mobile Meta -->
@@ -17,7 +17,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="InnerSpace">
-    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <meta name="theme-color" content="#121124">
 </head>
 <body>
@@ -33,20 +34,20 @@
                 <i data-lucide="compass" class="nav-logo-icon"></i>
                 <span class="nav-logo-text">InnerSpace</span>
             </div>
-            <div class="nav-links">
-                <button class="nav-link active" data-tab="dashboard-screen">
+            <div class="nav-links" role="tablist" aria-label="Primary navigation">
+                <button class="nav-link active" data-tab="dashboard-screen" aria-label="Hub" aria-current="page">
                     <i data-lucide="layout-dashboard"></i>
                     <span>Hub</span>
                 </button>
-                <button class="nav-link" data-tab="breath-screen">
+                <button class="nav-link" data-tab="breath-screen" aria-label="Breath Sync">
                     <i data-lucide="wind"></i>
                     <span>Breath Sync</span>
                 </button>
-                <button class="nav-link" data-tab="history-screen">
+                <button class="nav-link" data-tab="history-screen" aria-label="Timeline">
                     <i data-lucide="history"></i>
                     <span>Timeline</span>
                 </button>
-                <button class="nav-link" data-tab="blueprint-screen" id="nav-link-blueprint" disabled>
+                <button class="nav-link" data-tab="blueprint-screen" id="nav-link-blueprint" disabled aria-label="Blueprint">
                     <i data-lucide="sparkles"></i>
                     <span>Blueprint</span>
                 </button>
@@ -88,12 +89,12 @@
                 </div>
                 <div class="user-greeting">
                     <span>Welcome, <strong id="greeting-name">Explorer</strong></span>
-                    <div class="aura-selector" title="Align your Aura Energy">
-                        <span class="aura-lbl">Aura:</span>
-                        <button class="aura-dot-btn active" data-aura="violet" style="background: hsl(262, 80%, 65%);" title="Wisdom / Violet"></button>
-                        <button class="aura-dot-btn" data-aura="teal" style="background: hsl(174, 75%, 45%);" title="Harmony / Teal"></button>
-                        <button class="aura-dot-btn" data-aura="rose" style="background: hsl(340, 75%, 62%);" title="Passion / Rose"></button>
-                        <button class="aura-dot-btn" data-aura="amber" style="background: hsl(38, 92%, 55%);" title="Creativity / Amber"></button>
+                    <div class="aura-selector" title="Align your Aura Energy" role="group" aria-label="Aura theme">
+                        <span class="aura-lbl" id="aura-lbl">Aura:</span>
+                        <button class="aura-dot-btn active" data-aura="violet" style="background: hsl(262, 80%, 65%);" title="Wisdom / Violet" aria-label="Wisdom / Violet aura" aria-pressed="true"></button>
+                        <button class="aura-dot-btn" data-aura="teal" style="background: hsl(174, 75%, 45%);" title="Harmony / Teal" aria-label="Harmony / Teal aura" aria-pressed="false"></button>
+                        <button class="aura-dot-btn" data-aura="rose" style="background: hsl(340, 75%, 62%);" title="Passion / Rose" aria-label="Passion / Rose aura" aria-pressed="false"></button>
+                        <button class="aura-dot-btn" data-aura="amber" style="background: hsl(38, 92%, 55%);" title="Creativity / Amber" aria-label="Creativity / Amber aura" aria-pressed="false"></button>
                     </div>
                     <button id="reset-data-btn" class="btn btn-icon btn-outline btn-sm" title="Reset Journey">
                         <i data-lucide="rotate-ccw"></i>
@@ -431,20 +432,20 @@
                         <h2 id="question-text">Loading question...</h2>
                     </div>
 
-                    <div class="likert-scale-answers">
-                        <button class="btn likert-btn strong-agree" data-score="5">
+                    <div class="likert-scale-answers" role="group" aria-label="Rate your agreement">
+                        <button class="btn likert-btn strong-agree" data-score="5" aria-label="Strongly Agree">
                             <span class="btn-label">Strongly Agree</span>
                         </button>
-                        <button class="btn likert-btn agree" data-score="4">
+                        <button class="btn likert-btn agree" data-score="4" aria-label="Agree">
                             <span class="btn-label">Agree</span>
                         </button>
-                        <button class="btn likert-btn neutral" data-score="3">
+                        <button class="btn likert-btn neutral" data-score="3" aria-label="Neutral">
                             <span class="btn-label">Neutral</span>
                         </button>
-                        <button class="btn likert-btn disagree" data-score="2">
+                        <button class="btn likert-btn disagree" data-score="2" aria-label="Disagree">
                             <span class="btn-label">Disagree</span>
                         </button>
-                        <button class="btn likert-btn strong-disagree" data-score="1">
+                        <button class="btn likert-btn strong-disagree" data-score="1" aria-label="Strongly Disagree">
                             <span class="btn-label">Strongly Disagree</span>
                         </button>
                     </div>
@@ -537,7 +538,7 @@
                     </div>
 
                     <div class="journal-input-area">
-                        <textarea id="journal-textarea" placeholder="Start typing your reflections here... (minimum 50 characters for real-time analysis)"></textarea>
+                        <textarea id="journal-textarea" placeholder="Start typing your reflections here... (write at least 10 words to unlock real-time analysis and saving)"></textarea>
                         <div class="char-counter"><span id="journal-char-count">0</span> characters</div>
                     </div>
 
@@ -575,7 +576,7 @@
                         <div class="analysis-widget themes-widget">
                             <h3>Extracted Themes</h3>
                             <div class="theme-tags-cloud" id="theme-tags-cloud">
-                                <span class="theme-tag-placeholder">Write at least 50 characters to map your themes...</span>
+                                <span class="theme-tag-placeholder">Write at least 10 words to map your themes...</span>
                             </div>
                         </div>
                     </div>

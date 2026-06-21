@@ -159,7 +159,7 @@ export class AlignmentHistory {
             this.snapshotsList.appendChild(row);
         });
 
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
     }
 
     deleteSnapshot(id) {
@@ -355,7 +355,7 @@ export class AlignmentHistory {
             </div>
         `;
         this.milestonesList.appendChild(card);
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
     }
 
     renderBreathLogs(logs) {

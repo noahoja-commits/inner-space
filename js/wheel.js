@@ -126,7 +126,7 @@ export class LifeWheel {
             this.slidersContainer.appendChild(card);
         });
 
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
     }
 
     /**

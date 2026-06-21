@@ -2726,3 +2726,35 @@ body.aura-amber {
         font-size: 0.9rem !important;
     }
 }
+
+/* ===========================================================
+   Accessibility: respect the OS "reduce motion" preference.
+   Disables the ambient aura animation, transitions and any
+   keyframe-driven motion for users who opt out.
+   =========================================================== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    #aura-canvas,
+    .ambient-glow {
+        animation: none !important;
+    }
+}
+
+/* Visible keyboard focus outline for interactive controls (a11y) */
+.nav-link:focus-visible,
+.aura-dot-btn:focus-visible,
+.likert-btn:focus-visible,
+.btn:focus-visible,
+.ranked-chip:focus-visible,
+.slot-content:focus-visible {
+    outline: 2px solid var(--accent-teal, #2dd4bf);
+    outline-offset: 2px;
+}

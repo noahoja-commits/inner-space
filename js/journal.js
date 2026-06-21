@@ -94,6 +94,10 @@ export class PromptJournal {
             const isValid = this.updateCounterUI(text);
             this.saveBtn.disabled = !isValid;
 
+            // Auto-save the draft on every keystroke so leaving the screen
+            // (without pressing Save) never loses what was written.
+            this.saveDraft(text);
+
             if (isValid) {
                 this.analyzeText(text);
             } else {
@@ -110,9 +114,34 @@ export class PromptJournal {
                 sentiment: analysis.sentiment,
                 themes: analysis.themes
             });
+            this.clearDraft();
             this.app.showToast('Reflection saved and integrated!', 'check');
             this.app.showScreen('dashboard-screen');
         });
+    }
+
+    saveDraft(text) {
+        try {
+            localStorage.setItem('innerspace_journal_draft', JSON.stringify({
+                text: text,
+                prompt: REFLECTION_PROMPTS[this.promptIdx]
+            }));
+        } catch (e) {
+            // ignore quota / serialization errors for a best-effort draft
+        }
+    }
+
+    loadDraft() {
+        try {
+            const raw = localStorage.getItem('innerspace_journal_draft');
+            return raw ? JSON.parse(raw) : null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    clearDraft() {
+        localStorage.removeItem('innerspace_journal_draft');
     }
 
     updateCounterUI(text) {
@@ -138,10 +167,25 @@ export class PromptJournal {
             }
             this.analyzeText(text);
         } else {
-            this.textarea.value = "";
-            this.updateCounterUI("");
-            this.saveBtn.disabled = true;
-            this.resetAnalysis();
+            // No completed entry — restore an in-progress draft if one exists.
+            const draft = this.loadDraft();
+            if (draft && draft.text) {
+                this.textarea.value = draft.text;
+                const savedPromptIdx = REFLECTION_PROMPTS.indexOf(draft.prompt);
+                if (savedPromptIdx !== -1) this.promptIdx = savedPromptIdx;
+                const isValid = this.updateCounterUI(draft.text);
+                this.saveBtn.disabled = !isValid;
+                if (isValid) {
+                    this.analyzeText(draft.text);
+                } else {
+                    this.resetAnalysis();
+                }
+            } else {
+                this.textarea.value = "";
+                this.updateCounterUI("");
+                this.saveBtn.disabled = true;
+                this.resetAnalysis();
+            }
         }
 
         this.updatePromptDisplay();
@@ -169,7 +213,7 @@ export class PromptJournal {
         this.sentimentMarker.style.left = '50%';
         this.sentimentPct.innerText = 'Neutral';
         this.themeTagsCloud.innerHTML = `
-            <span class="theme-tag-placeholder">Write at least 50 characters to map your themes...</span>
+            <span class="theme-tag-placeholder">Write at least 10 words to map your themes...</span>
         `;
     }
 

@@ -329,7 +329,7 @@ export class ValuesSorter {
             this.candidatesList.appendChild(chip);
         });
         
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
     }
 
     addValueToNextSlot(val) {
@@ -367,7 +367,7 @@ export class ValuesSorter {
             }
         });
         
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
 
         // Enable save button only if all 5 values are ranked
         this.saveBtn.disabled = !this.top5.every(val => val !== null);

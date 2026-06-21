@@ -10,6 +10,28 @@ import { PromptJournal } from './journal.js';
 import { BreathSync } from './breath.js';
 import { AlignmentHistory } from './history.js';
 
+/**
+ * Escape user-derived strings before they are injected via innerHTML.
+ * Shared across modules to prevent stored-XSS from names / journal text / themes.
+ */
+export function safeCreateIcons() {
+    // Guard against the Lucide CDN script not being loaded yet (e.g. offline
+    // first-paint before the SW has cached it, or a slow CDN).
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+    }
+}
+
+export function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[c]));
+}
+
 const ZEN_QUOTES = [
     { text: "Who looks outside, dreams; who looks inside, awakes.", author: "Carl Jung" },
     { text: "Mindfulness isn't difficult, we just need to remember to do it.", author: "Sharon Salzberg" },
@@ -217,11 +239,9 @@ class InnerSpaceApp {
         this.saveState();
         
         this.auraSelectorButtons.forEach(btn => {
-            if (btn.getAttribute('data-aura') === aura) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
+            const isActive = btn.getAttribute('data-aura') === aura;
+            btn.classList.toggle('active', isActive);
+            btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
         });
         
         if (this.canvas) {
@@ -285,10 +305,12 @@ class InnerSpaceApp {
                 
                 // Highlight active nav tab
                 this.navLinks.forEach(link => {
-                    if (link.getAttribute('data-tab') === screenId) {
-                        link.classList.add('active');
+                    const isActive = link.getAttribute('data-tab') === screenId;
+                    link.classList.toggle('active', isActive);
+                    if (isActive) {
+                        link.setAttribute('aria-current', 'page');
                     } else {
-                        link.classList.remove('active');
+                        link.removeAttribute('aria-current');
                     }
                 });
             } else {
@@ -315,8 +337,8 @@ class InnerSpaceApp {
                 this.renderBlueprintPage();
             }
         }
-        
-        lucide.createIcons();
+
+        safeCreateIcons();
     }
 
     /**
@@ -405,8 +427,8 @@ class InnerSpaceApp {
                 row.innerHTML = `
                     <div class="bp-val-rank">${idx + 1}</div>
                     <div class="bp-val-info">
-                        <h4>${val.name}</h4>
-                        <p>${val.desc}</p>
+                        <h4>${escapeHtml(val.name)}</h4>
+                        <p>${escapeHtml(val.desc)}</p>
                     </div>
                 `;
                 valList.appendChild(row);
@@ -436,12 +458,12 @@ class InnerSpaceApp {
                 const gapCard = document.createElement('div');
                 gapCard.className = 'bp-gap-card';
                 
-                let valLabel = gap.diff > 0 ? `+${gap.diff} Growth Target` : 'Alighted';
+                let valLabel = gap.diff > 0 ? `+${gap.diff} Growth Target` : 'Aligned';
                 const adviceText = WHEEL_ADVICE[gap.id] || 'Continue supporting this category.';
-                
+
                 gapCard.innerHTML = `
-                    <h4>${gap.name} <span style="font-size:0.75rem;font-weight:400;color:var(--text-muted)">(${valLabel})</span></h4>
-                    <p>${adviceText}</p>
+                    <h4>${escapeHtml(gap.name)} <span style="font-size:0.75rem;font-weight:400;color:var(--text-muted)">(${valLabel})</span></h4>
+                    <p>${escapeHtml(adviceText)}</p>
                 `;
                 gapsList.appendChild(gapCard);
             });
@@ -540,7 +562,17 @@ class InnerSpaceApp {
         const cached = localStorage.getItem('innerspace_journey_state');
         if (cached) {
             try {
-                this.state = JSON.parse(cached);
+                const parsed = JSON.parse(cached) || {};
+                // Merge loaded data OVER the defaults so newer default keys
+                // (e.g. flowRate / snapshots / breathHistory) are never dropped
+                // when reading an older saved blob.
+                this.state = {
+                    ...this.state,
+                    ...parsed,
+                    // preserve array defaults if the saved value is missing/not an array
+                    snapshots: Array.isArray(parsed.snapshots) ? parsed.snapshots : this.state.snapshots,
+                    breathHistory: Array.isArray(parsed.breathHistory) ? parsed.breathHistory : this.state.breathHistory
+                };
             } catch (e) {
                 console.error("Error reading saved state from localStorage", e);
             }
@@ -573,7 +605,7 @@ class InnerSpaceApp {
             tIcon.style.color = 'var(--accent-blue)';
         }
 
-        lucide.createIcons();
+        safeCreateIcons();
 
         // Animation show trigger
         toast.classList.add('show');
