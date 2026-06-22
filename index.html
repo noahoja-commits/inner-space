@@ -39,6 +39,10 @@
                     <i data-lucide="layout-dashboard"></i>
                     <span>Hub</span>
                 </button>
+                <button class="nav-link" data-tab="innermap-screen" aria-label="Inner Map">
+                    <i data-lucide="map"></i>
+                    <span>Inner Map</span>
+                </button>
                 <button class="nav-link" data-tab="breath-screen" aria-label="Breath Sync">
                     <i data-lucide="wind"></i>
                     <span>Breath Sync</span>
@@ -131,6 +135,12 @@
                             </div>
                             <input type="range" min="10" max="150" value="40" id="aura-flow-slider" class="aura-flow-input">
                         </div>
+
+                        <button id="goto-innermap-btn" class="btn btn-secondary" style="margin-top:1.25rem;">
+                            <i data-lucide="map"></i>
+                            <span>Open your Inner Map</span>
+                            <i data-lucide="arrow-right"></i>
+                        </button>
                     </div>
                     <div class="blueprint-unlock-widget glass-card">
                         <div class="progress-circle-container">
@@ -581,6 +591,98 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- ==================== INNER MAP SCREEN ==================== -->
+        <section id="innermap-screen" class="screen">
+            <header class="module-header">
+                <div class="header-title-wrapper">
+                    <span class="module-category">Synthesis & Tracking</span>
+                    <h1>Your Inner Map</h1>
+                </div>
+                <div class="header-actions im-export-actions">
+                    <button id="im-export-text-btn" class="btn btn-outline btn-sm" title="Export readable text">
+                        <i data-lucide="file-text"></i>
+                        <span>Export Text</span>
+                    </button>
+                    <button id="im-export-json-btn" class="btn btn-primary btn-sm" title="Export all data as JSON">
+                        <i data-lucide="download"></i>
+                        <span>Export Data</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="innermap-content">
+                <!-- 1. Progress dashboard -->
+                <section class="im-section">
+                    <h2 class="im-section-title"><i data-lucide="layout-dashboard"></i> Progress &amp; Engagement</h2>
+                    <div class="im-progress-grid" id="im-progress-grid"></div>
+                </section>
+
+                <!-- 3. Streak + daily prompt -->
+                <section class="im-section">
+                    <h2 class="im-section-title"><i data-lucide="flame"></i> Daily Reflection</h2>
+                    <div class="im-streak-row">
+                        <div class="im-streak-stats glass-card">
+                            <div class="im-streak-stat">
+                                <span class="im-streak-num" id="im-streak-current">0</span>
+                                <span class="im-streak-lbl">Current streak (days)</span>
+                            </div>
+                            <div class="im-streak-stat">
+                                <span class="im-streak-num" id="im-streak-longest">0</span>
+                                <span class="im-streak-lbl">Longest streak</span>
+                            </div>
+                        </div>
+                        <div class="im-daily-card glass-card">
+                            <span class="im-daily-eyebrow">Prompt of the day</span>
+                            <p class="im-daily-prompt" id="im-daily-prompt"></p>
+                            <div class="im-streak-nudge" id="im-streak-nudge"></div>
+                            <button id="im-daily-prompt-btn" class="btn btn-secondary btn-sm">
+                                <i data-lucide="pen-line"></i>
+                                <span>Open Journal</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. Mood / check-in -->
+                <section class="im-section">
+                    <h2 class="im-section-title"><i data-lucide="activity"></i> Mood &amp; Energy Check-in</h2>
+                    <div class="im-mood-layout">
+                        <div class="im-mood-checkin glass-card" id="im-mood-checkin">
+                            <div class="im-mood-group">
+                                <span class="im-mood-grp-lbl">How's your mood today?</span>
+                                <div class="im-mood-options" id="im-mood-options"></div>
+                            </div>
+                            <div class="im-mood-group">
+                                <span class="im-mood-grp-lbl">Energy level?</span>
+                                <div class="im-energy-options" id="im-energy-options"></div>
+                            </div>
+                            <button id="im-mood-save-btn" class="btn btn-primary btn-sm w-full" disabled>
+                                <i data-lucide="check"></i>
+                                <span>Save today's check-in</span>
+                            </button>
+                        </div>
+                        <div class="im-mood-chart-card glass-card">
+                            <div class="im-chart-head">
+                                <h3>Trend</h3>
+                                <div class="im-chart-legend">
+                                    <span><span class="im-dot mood"></span> Mood</span>
+                                    <span><span class="im-dot energy"></span> Energy</span>
+                                </div>
+                            </div>
+                            <p class="im-mood-empty" id="im-mood-empty">Log a check-in on two or more days to see your mood and energy trend.</p>
+                            <svg id="im-mood-chart-svg" viewBox="0 0 320 130" width="100%" height="150px" style="display:none;"></svg>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. Insights synthesis -->
+                <section class="im-section">
+                    <h2 class="im-section-title"><i data-lucide="sparkles"></i> Insights Synthesis</h2>
+                    <div class="im-synthesis glass-card" id="im-synthesis-body"></div>
+                </section>
             </div>
         </section>
 

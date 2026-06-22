@@ -108,12 +108,25 @@ export class PromptJournal {
         this.saveBtn.addEventListener('click', () => {
             const text = this.textarea.value;
             const analysis = this.analyzeText(text);
-            this.app.saveModuleData('journal', {
+            const entry = {
+                ts: Date.now(),
                 text: text,
                 prompt: REFLECTION_PROMPTS[this.promptIdx],
                 sentiment: analysis.sentiment,
                 themes: analysis.themes
-            });
+            };
+            // Keep the existing single "journal" key (drives the Blueprint) AND
+            // append to an entry log that powers streaks, synthesis and export.
+            this.app.state.journal = {
+                text: entry.text,
+                prompt: entry.prompt,
+                sentiment: entry.sentiment,
+                themes: entry.themes
+            };
+            const entries = Array.isArray(this.app.state.journalEntries) ? this.app.state.journalEntries : [];
+            entries.push(entry);
+            this.app.state.journalEntries = entries;
+            this.app.saveState();
             this.clearDraft();
             this.app.showToast('Reflection saved and integrated!', 'check');
             this.app.showScreen('dashboard-screen');

@@ -3,7 +3,7 @@
  * Handles offline assets caching and high-speed loading.
  */
 
-const CACHE_NAME = 'innerspace-cache-v2';
+const CACHE_NAME = 'innerspace-cache-v3';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -17,6 +17,7 @@ const ASSETS_TO_CACHE = [
     './js/journal.js',
     './js/breath.js',
     './js/history.js',
+    './js/insights.js',
     './icon-192.png',
     './icon-512.png',
     './apple-touch-icon.png'

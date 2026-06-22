@@ -9,6 +9,7 @@ import { PersonalityPrism } from './personality.js';
 import { PromptJournal } from './journal.js';
 import { BreathSync } from './breath.js';
 import { AlignmentHistory } from './history.js';
+import { Insights } from './insights.js';
 
 /**
  * Escape user-derived strings before they are injected via innerHTML.
@@ -56,6 +57,8 @@ class InnerSpaceApp {
             aura: 'violet',
             snapshots: [],
             breathHistory: [],
+            journalEntries: [],
+            moods: [],
             flowRate: 40
         };
         
@@ -74,6 +77,7 @@ class InnerSpaceApp {
         this.journalModule = new PromptJournal(this);
         this.breathModule = new BreathSync(this);
         this.historyModule = new AlignmentHistory(this);
+        this.insightsModule = new Insights(this);
 
         this.initDOMElements();
         this.bindGlobalEvents();
@@ -223,6 +227,14 @@ class InnerSpaceApp {
             this.showScreen('blueprint-screen');
         });
 
+        // Open Inner Map button (dashboard hero)
+        const gotoInnerMapBtn = document.getElementById('goto-innermap-btn');
+        if (gotoInnerMapBtn) {
+            gotoInnerMapBtn.addEventListener('click', () => {
+                this.showScreen('innermap-screen');
+            });
+        }
+
         // Print PDF Button
         this.bpPrintBtn.addEventListener('click', () => {
             window.print();
@@ -299,7 +311,7 @@ class InnerSpaceApp {
             targetScreen.classList.add('active');
             
             // 1. Navigation bar visibility
-            const navTabs = ['dashboard-screen', 'breath-screen', 'history-screen', 'blueprint-screen'];
+            const navTabs = ['dashboard-screen', 'innermap-screen', 'breath-screen', 'history-screen', 'blueprint-screen'];
             if (navTabs.includes(screenId)) {
                 this.navBar.style.display = 'flex';
                 
@@ -333,6 +345,8 @@ class InnerSpaceApp {
                 this.breathModule.start();
             } else if (screenId === 'history-screen') {
                 this.historyModule.start();
+            } else if (screenId === 'innermap-screen') {
+                this.insightsModule.start();
             } else if (screenId === 'blueprint-screen') {
                 this.renderBlueprintPage();
             }
@@ -571,7 +585,9 @@ class InnerSpaceApp {
                     ...parsed,
                     // preserve array defaults if the saved value is missing/not an array
                     snapshots: Array.isArray(parsed.snapshots) ? parsed.snapshots : this.state.snapshots,
-                    breathHistory: Array.isArray(parsed.breathHistory) ? parsed.breathHistory : this.state.breathHistory
+                    breathHistory: Array.isArray(parsed.breathHistory) ? parsed.breathHistory : this.state.breathHistory,
+                    journalEntries: Array.isArray(parsed.journalEntries) ? parsed.journalEntries : this.state.journalEntries,
+                    moods: Array.isArray(parsed.moods) ? parsed.moods : this.state.moods
                 };
             } catch (e) {
                 console.error("Error reading saved state from localStorage", e);
